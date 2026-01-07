@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Patient - EMR System{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">Delete Patient</h1>
+
+<div class="card">
+    <div class="card-body">
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i> 
+            Are you sure you want to delete patient <strong>{{ patient.get_full_name }}</strong>?
+        </div>
+        <p>This action will deactivate the patient record. The data will be preserved but marked as inactive.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete Patient</button>
+            <a href="{% url 'patient_detail' patient.id %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

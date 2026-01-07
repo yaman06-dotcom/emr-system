@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ patient.get_full_name }} - EMR System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">{{ patient.get_full_name }}</h1>
+    <div>
+        <a href="{% url 'patient_update' patient.id %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        <a href="{% url 'visit_create_for_patient' patient.id %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> New Visit
+        </a>
+        <a href="{% url 'predict_risk' patient.id %}" class="btn btn-success">
+            <i class="bi bi-graph-up"></i> Predict Risk
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Personal Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>National ID:</strong> {{ patient.national_id }}</p>
+                <p><strong>Date of Birth:</strong> {{ patient.date_of_birth }} (Age: {{ age }})</p>
+                <p><strong>Gender:</strong> {{ patient.get_gender_display }}</p>
+                <p><strong>Phone:</strong> {{ patient.phone_number }}</p>
+                <p><strong>Email:</strong> {{ patient.email|default:"N/A" }}</p>
+                <p><strong>Address:</strong> {{ patient.address }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Medical Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Blood Type:</strong> {{ patient.blood_type|default:"N/A" }}</p>
+                <p><strong>Height:</strong> {{ patient.height|default:"N/A" }} cm</p>
+                <p><strong>Weight:</strong> {{ patient.weight|default:"N/A" }} kg</p>
+                <p><strong>BMI:</strong> {{ bmi|default:"N/A" }}</p>
+                <p><strong>Allergies:</strong> {{ patient.allergies|default:"None" }}</p>
+                <p><strong>Chronic Conditions:</strong> {{ patient.chronic_conditions|default:"None" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Visits</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Doctor</th>
+                            <th>Diagnosis</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for visit in visits %}
+                        <tr>
+                            <td>{{ visit.visit_date|date:"M d, Y" }}</td>
+                            <td>Dr. {{ visit.doctor.get_full_name }}</td>
+                            <td>{{ visit.diagnosis|truncatewords:15 }}</td>
+                            <td>
+                                <a href="{% url 'visit_detail' visit.id %}" class="btn btn-sm btn-info">View</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No visits recorded</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

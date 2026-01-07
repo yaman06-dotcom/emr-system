@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Risk Prediction Details - EMR System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Health Risk Prediction</h1>
+    <a href="{% url 'patient_detail' prediction.patient.id %}" class="btn btn-primary">
+        <i class="bi bi-person"></i> View Patient
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Prediction Results</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Patient:</strong> {{ prediction.patient.get_full_name }}</p>
+                <p><strong>Predicted By:</strong> Dr. {{ prediction.predicted_by.get_full_name }}</p>
+                <p><strong>Date:</strong> {{ prediction.prediction_date|date:"F d, Y H:i" }}</p>
+                <p><strong>Risk Level:</strong> 
+                    {% if prediction.risk_level == 'LOW' %}
+                    <span class="badge bg-success fs-5">LOW RISK</span>
+                    {% elif prediction.risk_level == 'MEDIUM' %}
+                    <span class="badge bg-warning fs-5">MEDIUM RISK</span>
+                    {% else %}
+                    <span class="badge bg-danger fs-5">HIGH RISK</span>
+                    {% endif %}
+                </p>
+                <p><strong>Risk Score:</strong> {{ prediction.risk_score }} (0-1 scale)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Input Features</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Age:</strong> {{ prediction.age }} years</p>
+                <p><strong>BMI:</strong> {{ prediction.bmi }}</p>
+                <p><strong>Blood Pressure:</strong> {{ prediction.blood_pressure_systolic }}/{{ prediction.blood_pressure_diastolic }} mmHg</p>
+                <p><strong>Family History of Diabetes:</strong> 
+                    {% if prediction.has_family_history %}
+                    <span class="badge bg-danger">Yes</span>
+                    {% else %}
+                    <span class="badge bg-success">No</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Recommendations</h5>
+    </div>
+    <div class="card-body">
+        <pre class="mb-0">{{ prediction.recommendations }}</pre>
+    </div>
+</div>
+
+{% if prediction.notes %}
+<div class="card mt-3">
+    <div class="card-header">
+        <h5 class="mb-0">Additional Notes</h5>
+    </div>
+    <div class="card-body">
+        <p>{{ prediction.notes }}</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

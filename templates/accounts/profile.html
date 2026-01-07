@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - EMR System{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">User Profile</h1>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ user.get_full_name }}</h5>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Role:</strong> <span class="badge bg-primary">{{ user.get_role_display }}</span></p>
+        {% if user.phone_number %}
+        <p><strong>Phone:</strong> {{ user.phone_number }}</p>
+        {% endif %}
+        {% if user.specialization %}
+        <p><strong>Specialization:</strong> {{ user.specialization }}</p>
+        {% endif %}
+        {% if user.license_number %}
+        <p><strong>License Number:</strong> {{ user.license_number }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

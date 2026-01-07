@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - EMR System{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">Dashboard</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card primary">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Patients</h5>
+                <h2 class="mb-0">{{ total_patients }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card success">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Visits</h5>
+                <h2 class="mb-0">{{ total_visits }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card warning">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Active Prescriptions</h5>
+                <h2 class="mb-0">{{ total_prescriptions }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card danger">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Recent Visits (7d)</h5>
+                <h2 class="mb-0">{{ recent_visits_count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Risk Distribution</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <span class="badge bg-success">Low Risk:</span> {{ risk_distribution.LOW|default:0 }}
+                </div>
+                <div class="mb-2">
+                    <span class="badge bg-warning">Medium Risk:</span> {{ risk_distribution.MEDIUM|default:0 }}
+                </div>
+                <div class="mb-2">
+                    <span class="badge bg-danger">High Risk:</span> {{ risk_distribution.HIGH|default:0 }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Prescription Alerts</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <i class="bi bi-exclamation-triangle text-warning"></i> Allergy Alerts: <strong>{{ allergy_alerts }}</strong>
+                </div>
+                <div class="mb-2">
+                    <i class="bi bi-exclamation-circle text-danger"></i> Drug Conflicts: <strong>{{ conflict_alerts }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Visits</h5>
+                <a href="{% url 'visit_list' %}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for visit in recent_visits %}
+                    <a href="{% url 'visit_detail' visit.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ visit.patient.get_full_name }}</h6>
+                            <small>{{ visit.visit_date|date:"M d, Y" }}</small>
+                        </div>
+                        <p class="mb-1 text-muted small">{{ visit.diagnosis|truncatewords:10 }}</p>
+                        <small>Dr. {{ visit.doctor.get_full_name }}</small>
+                    </a>
+                    {% empty %}
+                    <p class="text-muted">No recent visits</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">High Risk Patients</h5>
+                <a href="{% url 'prediction_list' %}" class="btn btn-sm btn-danger">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for prediction in high_risk_predictions %}
+                    <a href="{% url 'prediction_detail' prediction.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ prediction.patient.get_full_name }}</h6>
+                            <span class="badge bg-danger">HIGH RISK</span>
+                        </div>
+                        <small>Risk Score: {{ prediction.risk_score }}</small><br>
+                        <small class="text-muted">{{ prediction.prediction_date|date:"M d, Y" }}</small>
+                    </a>
+                    {% empty %}
+                    <p class="text-muted">No high-risk predictions</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

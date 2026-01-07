@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Risk Predictions - EMR System{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">Health Risk Predictions</h1>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Risk Level</th>
+                    <th>Risk Score</th>
+                    <th>Age</th>
+                    <th>BMI</th>
+                    <th>BP</th>
+                    <th>Family History</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prediction in predictions %}
+                <tr>
+                    <td>
+                        <a href="{% url 'patient_detail' prediction.patient.id %}">
+                            {{ prediction.patient.get_full_name }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if prediction.risk_level == 'LOW' %}
+                        <span class="badge bg-success">LOW</span>
+                        {% elif prediction.risk_level == 'MEDIUM' %}
+                        <span class="badge bg-warning">MEDIUM</span>
+                        {% else %}
+                        <span class="badge bg-danger">HIGH</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ prediction.risk_score }}</td>
+                    <td>{{ prediction.age }}</td>
+                    <td>{{ prediction.bmi }}</td>
+                    <td>{{ prediction.blood_pressure_systolic }}/{{ prediction.blood_pressure_diastolic }}</td>
+                    <td>
+                        {% if prediction.has_family_history %}
+                        <i class="bi bi-check-circle text-danger"></i> Yes
+                        {% else %}
+                        <i class="bi bi-x-circle text-muted"></i> No
+                        {% endif %}
+                    </td>
+                    <td>{{ prediction.prediction_date|date:"M d, Y" }}</td>
+                    <td>
+                        <a href="{% url 'prediction_detail' prediction.id %}" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">No predictions found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
